@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>桌面AI工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 20px;
+            padding: 20px;
+            height: 100vh;
+        }
+
+        .main-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .screen-container {
+            flex: 1;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            min-height: 400px;
+        }
+
+        #screen-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .capture-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            font-size: 18px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: #fff;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .input-group textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ddd;
+        }
+
+        .status-dot.connected {
+            background: #38ef7d;
+            box-shadow: 0 0 10px rgba(56, 239, 125, 0.5);
+        }
+
+        .status-dot.disconnected {
+            background: #ff4757;
+        }
+
+        .location-result {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .location-result h3 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        .location-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .location-item {
+            background: #fff;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .location-item .label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 4px;
+        }
+
+        .location-item .value {
+            font-size: 20px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .analysis-result {
+            margin-top: 16px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 16px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .analysis-result h3 {
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .analysis-text {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .log-container {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 12px;
+            padding: 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+        }
+
+        .log-timestamp {
+            color: #888;
+            margin-right: 8px;
+        }
+
+        .log-info { color: #4fc3f7; }
+        .log-success { color: #81c784; }
+        .log-error { color: #e57373; }
+
+        .ai-config {
+            margin-bottom: 20px;
+        }
+
+        .ai-config input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .ai-config input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-panel">
+            <h1>🖥️ 桌面AI控制台</h1>
+            <p class="subtitle">实时捕获、识别和控制您的桌面</p>
+            
+            <div class="screen-container">
+                <img id="screen-preview" src="" alt="屏幕预览" style="display: none;">
+                <div id="capture-overlay" class="capture-overlay">
+                    点击"捕获屏幕"开始
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-primary" id="capture-btn">
+                    📸 捕获屏幕
+                </button>
+                <button class="btn btn-secondary" id="continuous-btn">
+                    🔄 连续捕获
+                </button>
+                <button class="btn btn-secondary" id="stop-btn" disabled>
+                    ⏹️ 停止
+                </button>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="analyze">AI分析</button>
+                <button class="tab" data-tab="locate">位置定位</button>
+                <button class="tab" data-tab="execute">执行控制</button>
+                <button class="tab" data-tab="logs">日志</button>
+            </div>
+
+            <div id="analyze-tab" class="tab-content active">
+                <div class="input-group">
+                    <label>分析提示词</label>
+                    <textarea id="analyze-prompt" placeholder="描述你想让AI分析的内容...">详细描述这张截图的内容，包括桌面上有哪些窗口和应用程序。</textarea>
+                </div>
+                <button class="btn btn-primary" id="analyze-btn">
+                    🔍 开始分析
+                </button>
+                <div id="analysis-result" class="analysis-result" style="display: none;">
+                    <h3>📊 分析结果</h3>
+                    <div id="analysis-text" class="analysis-text"></div>
+                </div>
+            </div>
+
+            <div id="locate-tab" class="tab-content">
+                <div class="input-group">
+                    <label>要定位的元素</label>
+                    <textarea id="locate-description" placeholder="描述你要找的元素，例如：打开的Chrome浏览器、任务栏上的时间等">Chrome浏览器窗口</textarea>
+                </div>
+                <button class="btn btn-success" id="locate-btn">
+                    🎯 定位元素
+                </button>
+                <div id="location-result" class="location-result" style="display: none;">
+                    <h3>📍 定位结果</h3>
+                    <div class="location-info">
+                        <div class="location-item">
+                            <div class="label">X 坐标</div>
+                            <div class="value" id="loc-x">-</div>
+                        </div>
+                        <div class="location-item">
+                            <div class="label">Y 坐标</div>
+                            <div class="value" id="loc-y">-</div>
+                        </div>
+                        <div class="location-item">
+                            <div class="label">宽度</div>
+                            <div class="value" id="loc-width">-</div>
+                        </div>
+                        <div class="location-item">
+                            <div class="label">高度</div>
+                            <div class="value" id="loc-height">-</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 16px; text-align: center;">
+                        <button class="btn btn-primary" id="click-located-btn">
+                            🖱️ 点击该位置
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="execute-tab" class="tab-content">
+                <div class="input-group">
+                    <label>执行动作</label>
+                    <textarea id="execute-command" placeholder="描述你想执行的任务，例如：打开Chrome浏览器并搜索'AI'">打开Chrome浏览器</textarea>
+                </div>
+                <button class="btn btn-primary" id="execute-btn">
+                    ⚡ 执行任务
+                </button>
+            </div>
+
+            <div id="logs-tab" class="tab-content">
+                <div class="log-container" id="log-container">
+                    <div class="log-entry log-info">
+                        <span class="log-timestamp">[系统]</span>
+                        桌面AI工具已就绪
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="side-panel">
+            <div class="card">
+                <h2 style="color: #333; margin-bottom: 20px;">⚙️ 配置</h2>
+                
+                <div class="ai-config">
+                    <label>OpenAI API Key</label>
+                    <input type="password" id="api-key" placeholder="sk-...">
+                </div>
+
+                <div class="status-indicator">
+                    <div class="status-dot" id="connection-status"></div>
+                    <span id="status-text">未连接</span>
+                </div>
+
+                <button class="btn btn-primary" id="connect-btn">
+                    连接服务
+                </button>
+            </div>
+
+            <div class="card">
+                <h2 style="color: #333; margin-bottom: 20px;">🎯 快速操作</h2>
+                
+                <div class="controls" style="flex-direction: column; gap: 12px;">
+                    <button class="btn btn-secondary" id="quick-click">
+                        🖱️ 模拟点击 (100, 100)
+                    </button>
+                    <button class="btn btn-secondary" id="quick-type">
+                        ⌨️ 模拟输入 "Hello"
+                    </button>
+                    <button class="btn btn-secondary" id="quick-scroll">
+                        📜 模拟滚动
+                    </button>
+                    <button class="btn btn-secondary" id="get-position">
+                        📍 获取鼠标位置
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 style="color: #333; margin-bottom: 20px;">📈 统计信息</h2>
+                <div class="location-info">
+                    <div class="location-item">
+                        <div class="label">捕获次数</div>
+                        <div class="value" id="capture-count">0</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="label">执行动作</div>
+                        <div class="value" id="action-count">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        class DesktopAITool {
+            constructor() {
+                this.socket = null;
+                this.apiBase = window.location.origin;
+                this.captureCount = 0;
+                this.actionCount = 0;
+                this.isContinuous = false;
+                this.lastLocation = null;
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.connectSocket();
+                this.addLog('系统初始化完成', 'info');
+            }
+
+            setupEventListeners() {
+                document.getElementById('connect-btn').addEventListener('click', () => this.connect());
+                document.getElementById('capture-btn').addEventListener('click', () => this.captureScreen());
+                document.getElementById('continuous-btn').addEventListener('click', () => this.toggleContinuous());
+                document.getElementById('stop-btn').addEventListener('click', () => this.stopContinuous());
+                document.getElementById('analyze-btn').addEventListener('click', () => this.analyzeScreen());
+                document.getElementById('locate-btn').addEventListener('click', () => this.locateElement());
+                document.getElementById('execute-btn').addEventListener('click', () => this.executeTask());
+                document.getElementById('click-located-btn').addEventListener('click', () => this.clickLocated());
+                document.getElementById('quick-click').addEventListener('click', () => this.quickClick());
+                document.getElementById('quick-type').addEventListener('click', () => this.quickType());
+                document.getElementById('quick-scroll').addEventListener('click', () => this.quickScroll());
+                document.getElementById('get-position').addEventListener('click', () => this.getMousePosition());
+
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => this.switchTab(e.target.dataset.tab));
+                });
+            }
+
+            connectSocket() {
+                try {
+                    this.socket = io();
+                    
+                    this.socket.on('connect', () => {
+                        this.updateStatus(true);
+                        this.addLog('Socket.IO 连接成功', 'success');
+                    });
+
+                    this.socket.on('disconnect', () => {
+                        this.updateStatus(false);
+                        this.addLog('Socket.IO 连接断开', 'error');
+                    });
+
+                    this.socket.on('capture:update', (data) => {
+                        this.updateScreenPreview();
+                    });
+
+                    this.socket.on('task:phase', (data) => {
+                        this.addLog(`任务阶段: ${data.phase}`, 'info');
+                    });
+
+                    this.socket.on('task:complete', (result) => {
+                        this.addLog(`任务完成: ${result.success ? '成功' : '失败'}`, result.success ? 'success' : 'error');
+                        this.actionCount++;
+                        document.getElementById('action-count').textContent = this.actionCount;
+                    });
+                } catch (error) {
+                    this.addLog(`Socket.IO 连接失败: ${error.message}`, 'error');
+                }
+            }
+
+            async connect() {
+                const apiKey = document.getElementById('api-key').value;
+                if (!apiKey) {
+                    this.addLog('请输入 API Key', 'error');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${this.apiBase}/api/health`);
+                    if (response.ok) {
+                        this.addLog('API 服务器连接成功', 'success');
+                        this.updateStatus(true);
+                    }
+                } catch (error) {
+                    this.addLog(`连接失败: ${error.message}`, 'error');
+                }
+            }
+
+            async captureScreen() {
+                try {
+                    this.addLog('正在捕获屏幕...', 'info');
+                    
+                    const response = await fetch(`${this.apiBase}/api/capture`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({})
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('截图失败');
+                    }
+
+                    const data = await response.json();
+                    this.displayCapture(data);
+                    this.captureCount++;
+                    document.getElementById('capture-count').textContent = this.captureCount;
+                    this.addLog('屏幕捕获成功', 'success');
+                } catch (error) {
+                    this.addLog(`截图失败: ${error.message}`, 'error');
+                }
+            }
+
+            displayCapture(data) {
+                const preview = document.getElementById('screen-preview');
+                const overlay = document.getElementById('capture-overlay');
+                
+                if (data.dataURL) {
+                    preview.src = data.dataURL;
+                    preview.style.display = 'block';
+                    overlay.style.display = 'none';
+                }
+            }
+
+            updateScreenPreview() {
+                fetch(`${this.apiBase}/api/capture/last`)
+                    .then(res => res.json())
+                    .then(data => this.displayCapture(data))
+                    .catch(err => console.error('更新预览失败:', err));
+            }
+
+            toggleContinuous() {
+                if (this.isContinuous) {
+                    this.stopContinuous();
+                } else {
+                    this.startContinuous();
+                }
+            }
+
+            async startContinuous() {
+                try {
+                    await fetch(`${this.apiBase}/api/capture`, { method: 'POST' });
+                    this.isContinuous = true;
+                    document.getElementById('continuous-btn').textContent = '⏹️ 停止连续';
+                    document.getElementById('stop-btn').disabled = false;
+                    this.addLog('开始连续捕获', 'info');
+                } catch (error) {
+                    this.addLog(`启动连续捕获失败: ${error.message}`, 'error');
+                }
+            }
+
+            async stopContinuous() {
+                this.isContinuous = false;
+                document.getElementById('continuous-btn').textContent = '🔄 连续捕获';
+                document.getElementById('stop-btn').disabled = true;
+                this.addLog('停止连续捕获', 'info');
+            }
+
+            async analyzeScreen() {
+                const prompt = document.getElementById('analyze-prompt').value;
+                
+                try {
+                    this.addLog('正在进行AI分析...', 'info');
+                    
+                    const response = await fetch(`${this.apiBase}/api/analyze`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ prompt })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('分析失败');
+                    }
+
+                    const data = await response.json();
+                    this.displayAnalysis(data);
+                    this.addLog('分析完成', 'success');
+                } catch (error) {
+                    this.addLog(`分析失败: ${error.message}`, 'error');
+                }
+            }
+
+            displayAnalysis(data) {
+                const resultDiv = document.getElementById('analysis-result');
+                const textDiv = document.getElementById('analysis-text');
+                
+                textDiv.textContent = data.description || data.error || '无结果';
+                resultDiv.style.display = 'block';
+            }
+
+            async locateElement() {
+                const description = document.getElementById('locate-description').value;
+                
+                try {
+                    this.addLog('正在定位元素...', 'info');
+                    
+                    const response = await fetch(`${this.apiBase}/api/locate`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ description })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('定位失败');
+                    }
+
+                    const data = await response.json();
+                    this.displayLocation(data);
+                    this.addLog(`定位完成: ${data.found ? '找到' : '未找到'}`, data.found ? 'success' : 'error');
+                } catch (error) {
+                    this.addLog(`定位失败: ${error.message}`, 'error');
+                }
+            }
+
+            displayLocation(data) {
+                const resultDiv = document.getElementById('location-result');
+                
+                if (data.found && data.location) {
+                    document.getElementById('loc-x').textContent = Math.round(data.location.x);
+                    document.getElementById('loc-y').textContent = Math.round(data.location.y);
+                    document.getElementById('loc-width').textContent = Math.round(data.location.width);
+                    document.getElementById('loc-height').textContent = Math.round(data.location.height);
+                    this.lastLocation = data.location;
+                    resultDiv.style.display = 'block';
+                } else {
+                    resultDiv.style.display = 'none';
+                    this.addLog('未找到指定元素', 'error');
+                }
+            }
+
+            async clickLocated() {
+                if (!this.lastLocation) {
+                    this.addLog('没有可点击的位置', 'error');
+                    return;
+                }
+
+                const { x, y } = this.lastLocation;
+                await this.executeAction('click', { x, y });
+            }
+
+            async executeTask() {
+                const task = document.getElementById('execute-command').value;
+                
+                try {
+                    this.addLog('正在执行任务...', 'info');
+                    
+                    const response = await fetch(`${this.apiBase}/api/task`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ task })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('任务执行失败');
+                    }
+
+                    const data = await response.json();
+                    this.addLog(`任务执行完成: ${data.success ? '成功' : '失败'}`, data.success ? 'success' : 'error');
+                    
+                    if (data.context?.plan) {
+                        this.addLog(`计划步骤: ${data.context.plan.estimatedSteps} 步`, 'info');
+                    }
+                } catch (error) {
+                    this.addLog(`任务执行失败: ${error.message}`, 'error');
+                }
+            }
+
+            async executeAction(action, params) {
+                try {
+                    const response = await fetch(`${this.apiBase}/api/execute`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action, params })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('执行失败');
+                    }
+
+                    this.actionCount++;
+                    document.getElementById('action-count').textContent = this.actionCount;
+                    this.addLog(`动作 ${action} 执行成功`, 'success');
+                } catch (error) {
+                    this.addLog(`执行失败: ${error.message}`, 'error');
+                }
+            }
+
+            async quickClick() {
+                await this.executeAction('click', { x: 100, y: 100 });
+            }
+
+            async quickType() {
+                await this.executeAction('type', { text: 'Hello' });
+            }
+
+            async quickScroll() {
+                await this.executeAction('scroll', { clicks: 3, direction: 'down' });
+            }
+
+            async getMousePosition() {
+                try {
+                    const response = await fetch(`${this.apiBase}/api/position`);
+                    const data = await response.json();
+                    this.addLog(`鼠标位置: (${data.position.x}, ${data.position.y})`, 'info');
+                } catch (error) {
+                    this.addLog(`获取位置失败: ${error.message}`, 'error');
+                }
+            }
+
+            switchTab(tabName) {
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.tab === tabName);
+                });
+                
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.toggle('active', content.id === `${tabName}-tab`);
+                });
+            }
+
+            updateStatus(connected) {
+                const statusDot = document.getElementById('connection-status');
+                const statusText = document.getElementById('status-text');
+                
+                statusDot.classList.toggle('connected', connected);
+                statusDot.classList.toggle('disconnected', !connected);
+                statusText.textContent = connected ? '已连接' : '未连接';
+            }
+
+            addLog(message, type = 'info') {
+                const container = document.getElementById('log-container');
+                const entry = document.createElement('div');
+                entry.className = `log-entry log-${type}`;
+                
+                const timestamp = new Date().toLocaleTimeString();
+                entry.innerHTML = `<span class="log-timestamp">[${timestamp}]</span>${message}`;
+                
+                container.appendChild(entry);
+                container.scrollTop = container.scrollHeight;
+
+                while (container.children.length > 100) {
+                    container.removeChild(container.firstChild);
+                }
+            }
+        }
+
+        const tool = new DesktopAITool();
+    </script>
+</body>
+</html>

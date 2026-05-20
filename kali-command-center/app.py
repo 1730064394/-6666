@@ -94,6 +94,12 @@ def index():
     with open('/workspace/kali-command-center/templates/index.html', 'r', encoding='utf-8') as f:
         return f.read()
 
+@app.route('/gui')
+def gui():
+    """GUI工具执行界面"""
+    with open('/workspace/kali-command-center/templates/gui.html', 'r', encoding='utf-8') as f:
+        return f.read()
+
 @app.route('/execute', methods=['POST'])
 def execute_command():
     """执行命令接口"""

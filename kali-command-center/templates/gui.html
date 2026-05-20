@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kali Command Center - GUI Tools</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a25;
+            --bg-card: #15151f;
+            --border-color: #2a2a3a;
+            --text-primary: #e8e8f0;
+            --text-secondary: #9090a0;
+            --text-muted: #606070;
+            --accent-green: #00ff88;
+            --accent-blue: #00aaff;
+            --accent-purple: #aa66ff;
+            --accent-orange: #ffaa00;
+            --accent-red: #ff4466;
+            --accent-cyan: #00ffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-icon {
+            font-size: 32px;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-subtitle {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-green), #00cc66);
+            color: var(--bg-primary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--accent-red), #cc2244);
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Main Container */
+        .main-container {
+            display: flex;
+            height: calc(100vh - 80px);
+        }
+
+        /* Sidebar - Tools List */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px 12px 40px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .category-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+        }
+
+        .category-item {
+            margin-bottom: 8px;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .category-header:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--border-color);
+        }
+
+        .category-header.active {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 170, 255, 0.1));
+            border-color: var(--accent-green);
+        }
+
+        .category-icon {
+            font-size: 24px;
+            width: 32px;
+            text-align: center;
+        }
+
+        .category-info {
+            flex: 1;
+        }
+
+        .category-name {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .category-count {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .category-arrow {
+            color: var(--text-muted);
+            transition: transform 0.3s;
+        }
+
+        .category-header.active .category-arrow {
+            transform: rotate(90deg);
+            color: var(--accent-green);
+        }
+
+        .tool-list {
+            display: none;
+            padding: 8px 0 0 44px;
+        }
+
+        .category-header.active + .tool-list {
+            display: block;
+        }
+
+        .tool-item {
+            padding: 10px 12px;
+            margin-bottom: 4px;
+            background: var(--bg-primary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            position: relative;
+        }
+
+        .tool-item:hover {
+            background: var(--bg-card);
+            border-color: var(--accent-blue);
+            transform: translateX(4px);
+        }
+
+        .tool-item.selected {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 170, 255, 0.15));
+            border-color: var(--accent-green);
+        }
+
+        .tool-name {
+            font-weight: 500;
+            font-size: 13px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tool-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-green);
+        }
+
+        .tool-item:not(.installed) .tool-status {
+            background: var(--accent-red);
+        }
+
+        .tool-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Main Content - Tool Config */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--bg-primary);
+        }
+
+        .tool-header {
+            padding: 24px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tool-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .tool-title-icon {
+            font-size: 32px;
+        }
+
+        .tool-description {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .command-preview {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--accent-green);
+            position: relative;
+        }
+
+        .command-label {
+            position: absolute;
+            top: -8px;
+            left: 12px;
+            background: var(--bg-secondary);
+            padding: 0 8px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .form-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .form-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .form-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-purple);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .required-mark {
+            color: var(--accent-red);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .form-checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .checkbox-item:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .checkbox-item.selected {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 170, 255, 0.15));
+            border-color: var(--accent-green);
+        }
+
+        .checkbox-item input {
+            display: none;
+        }
+
+        .checkbox-icon {
+            color: var(--accent-green);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .checkbox-item.selected .checkbox-icon {
+            opacity: 1;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            padding: 24px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn-execute {
+            flex: 1;
+            padding: 16px;
+            font-size: 16px;
+        }
+
+        /* Terminal Output */
+        .terminal-panel {
+            width: 400px;
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .terminal-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .terminal-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .terminal-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+        }
+
+        .status-dot.running {
+            background: var(--accent-green);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .terminal-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .terminal-btn {
+            padding: 6px 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .terminal-btn:hover {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .terminal-output {
+            flex: 1;
+            background: #050508;
+            padding: 16px;
+            overflow-y: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .output-line {
+            margin-bottom: 2px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .output-line.success {
+            color: var(--accent-green);
+        }
+
+        .output-line.error {
+            color: var(--accent-red);
+        }
+
+        .output-line.warning {
+            color: var(--accent-orange);
+        }
+
+        .output-line.info {
+            color: var(--accent-blue);
+        }
+
+        .output-line.command {
+            color: var(--accent-cyan);
+        }
+
+        .output-line.result {
+            color: var(--text-primary);
+        }
+
+        .terminal-input {
+            padding: 16px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 8px;
+        }
+
+        .terminal-input input {
+            flex: 1;
+            padding: 10px 14px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+        }
+
+        .terminal-input input:focus {
+            outline: none;
+            border-color: var(--accent-green);
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .empty-icon {
+            font-size: 80px;
+            margin-bottom: 24px;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-secondary);
+        }
+
+        .empty-desc {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .terminal-panel {
+                width: 350px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+            .terminal-panel {
+                width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon"><i class="fas fa-terminal"></i></div>
+            <div>
+                <div class="logo-text">Kali Command Center</div>
+                <div class="logo-subtitle">可视化工具执行平台</div>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-secondary" onclick="loadTools()">
+                <i class="fas fa-sync-alt"></i>
+                刷新工具
+            </button>
+            <button class="btn btn-secondary" onclick="toggleView('classic')">
+                <i class="fas fa-terminal"></i>
+                经典模式
+            </button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <!-- Sidebar - Tools List -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" id="toolSearch" placeholder="搜索工具..." onkeyup="filterTools()">
+                </div>
+            </div>
+            <div class="category-list" id="categoryList">
+                <!-- Categories will be loaded here -->
+            </div>
+        </aside>
+
+        <!-- Main Content - Tool Config -->
+        <main class="main-content" id="mainContent">
+            <div class="empty-state" id="emptyState">
+                <div class="empty-icon"><i class="fas fa-crosshairs"></i></div>
+                <div class="empty-title">选择一个工具开始</div>
+                <div class="empty-desc">从左侧工具列表选择一个工具<br>填写参数并执行</div>
+            </div>
+
+            <div id="toolConfig" style="display: none;">
+                <div class="tool-header">
+                    <div class="tool-title">
+                        <i class="fas fa-tools tool-title-icon" id="toolIcon"></i>
+                        <span id="toolName">工具名称</span>
+                    </div>
+                    <div class="tool-description" id="toolDescription">工具描述</div>
+                    <div class="command-preview">
+                        <span class="command-label">命令预览</span>
+                        <span id="commandPreview">$ nmap [options]</span>
+                    </div>
+                </div>
+
+                <div class="form-container" id="formContainer">
+                    <!-- Form will be generated here -->
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" onclick="resetForm()">
+                        <i class="fas fa-undo"></i>
+                        重置
+                    </button>
+                    <button class="btn btn-execute btn-primary" id="executeBtn" onclick="executeTool()">
+                        <i class="fas fa-play"></i>
+                        执行工具
+                    </button>
+                    <button class="btn btn-danger" id="stopBtn" onclick="stopExecution()" style="display: none;">
+                        <i class="fas fa-stop"></i>
+                        停止
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Terminal Output -->
+        <aside class="terminal-panel">
+            <div class="terminal-header">
+                <div class="terminal-title">
+                    <i class="fas fa-terminal"></i>
+                    终端输出
+                </div>
+                <div class="terminal-status">
+                    <div class="status-dot" id="statusDot"></div>
+                    <span id="statusText">空闲</span>
+                </div>
+            </div>
+            <div class="terminal-actions">
+                <button class="terminal-btn" onclick="clearTerminal()">
+                    <i class="fas fa-trash"></i> 清空
+                </button>
+                <button class="terminal-btn" onclick="copyOutput()">
+                    <i class="fas fa-copy"></i> 复制
+                </button>
+                <button class="terminal-btn" onclick="downloadOutput()">
+                    <i class="fas fa-download"></i> 下载
+                </button>
+            </div>
+            <div class="terminal-output" id="terminalOutput">
+                <div class="output-line info">[System] Kali Command Center 已就绪</div>
+                <div class="output-line info">[System] 选择一个工具开始执行...</div>
+            </div>
+            <div class="terminal-input">
+                <input type="text" id="quickCommand" placeholder="快速命令..." onkeypress="handleQuickCommand(event)">
+                <button class="btn btn-secondary" onclick="executeQuickCommand()">
+                    <i class="fas fa-play"></i>
+                </button>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        // Global state
+        let toolsData = {};
+        let selectedTool = null;
+        let isExecuting = false;
+        let currentEventSource = null;
+        let executionHistory = [];
+
+        // Tool definitions with parameters
+        const TOOL_DEFINITIONS = {
+            'nmap': {
+                name: 'Nmap',
+                icon: 'fa-radar',
+                description: '网络映射器和端口扫描器',
+                category: 'Information Gathering',
+                command: 'nmap',
+                parameters: [
+                    { name: '目标', flag: '', type: 'text', placeholder: '192.168.1.1 或 example.com', required: true, hint: '目标IP或域名' },
+                    { name: '扫描类型', flag: '-s', type: 'select', options: [
+                        { value: '-sV', label: '版本检测 (-sV)' },
+                        { value: '-sC', label: '默认脚本 (-sC)' },
+                        { value: '-sS', label: 'SYN扫描 (-sS)' },
+                        { value: '-sT', label: 'TCP扫描 (-sT)' },
+                        { value: '-sU', label: 'UDP扫描 (-sU)' },
+                        { value: '-O', label: '操作系统检测 (-O)' },
+                        { value: '-A', label: '全面扫描 (-A)' }
+                    ], required: false, hint: '选择扫描类型' },
+                    { name: '端口范围', flag: '-p', type: 'text', placeholder: '1-1000 或 -p-', required: false, hint: '扫描的端口范围，-p-表示所有端口' },
+                    { name: '额外选项', flag: '', type: 'text', placeholder: '--script vuln 或 -T4', required: false, hint: '其他Nmap选项' },
+                    { name: '输出文件', flag: '-oA', type: 'text', placeholder: 'scan_result', required: false, hint: '保存扫描结果到文件（不带扩展名）' }
+                ]
+            },
+            'sqlmap': {
+                name: 'SQLMap',
+                icon: 'fa-database',
+                description: '自动化SQL注入检测和利用工具',
+                category: 'Web Application Analysis',
+                command: 'sqlmap',
+                parameters: [
+                    { name: '目标URL', flag: '-u', type: 'text', placeholder: 'http://target.com/?id=1', required: true, hint: '目标URL' },
+                    { name: '扫描级别', flag: '--level', type: 'select', options: [
+                        { value: '1', label: 'Level 1 (默认)' },
+                        { value: '2', label: 'Level 2' },
+                        { value: '3', label: 'Level 3' },
+                        { value: '5', label: 'Level 5 (最高)' }
+                    ], required: false, hint: '更高的级别会测试更多参数' },
+                    { name: '风险级别', flag: '--risk', type: 'select', options: [
+                        { value: '1', label: 'Risk 1 (安全)' },
+                        { value: '2', label: 'Risk 2' },
+                        { value: '3', label: 'Risk 3 (危险)' }
+                    ], required: false, hint: '更高的风险可能造成数据破坏' },
+                    { name: '自动模式', flag: '--batch', type: 'checkbox', required: false, hint: '自动回答所有问题' },
+                    { name: '获取数据库', flag: '--dbs', type: 'checkbox', required: false, hint: '列出所有数据库' },
+                    { name: '获取表', flag: '-D {db} --tables', type: 'checkbox', required: false, hint: '列出指定数据库的表' },
+                    { name: '数据库名', flag: '-D', type: 'text', placeholder: 'database_name', required: false, hint: '当使用--tables时指定数据库名' }
+                ]
+            },
+            'hydra': {
+                name: 'Hydra',
+                icon: 'fa-key',
+                description: '快速网络登录暴力破解工具',
+                category: 'Password Attacks',
+                command: 'hydra',
+                parameters: [
+                    { name: '目标', flag: '', type: 'text', placeholder: '192.168.1.1 或 target.com', required: true, hint: '目标IP或域名' },
+                    { name: '服务类型', flag: '', type: 'select', options: [
+                        { value: 'ssh', label: 'SSH' },
+                        { value: 'ftp', label: 'FTP' },
+                        { value: 'http-post-form', label: 'HTTP POST表单' },
+                        { value: 'http-get-form', label: 'HTTP GET表单' },
+                        { value: 'smb', label: 'SMB' },
+                        { value: 'mysql', label: 'MySQL' },
+                        { value: 'postgres', label: 'PostgreSQL' },
+                        { value: 'rdp', label: 'RDP' }
+                    ], required: true, hint: '暴力破解的服务类型' },
+                    { name: '用户名', flag: '-l', type: 'text', placeholder: 'admin', required: false, hint: '单个用户名（使用-L指定文件）' },
+                    { name: '用户名列表', flag: '-L', type: 'text', placeholder: '/usr/share/wordlists/users.txt', required: false, hint: '用户名列表文件路径' },
+                    { name: '密码列表', flag: '-P', type: 'text', placeholder: '/usr/share/wordlists/rockyou.txt', required: true, hint: '密码列表文件路径' },
+                    { name: '线程数', flag: '-t', type: 'number', placeholder: '4', required: false, hint: '并行线程数（默认16）' },
+                    { name: 'Verbose', flag: '-V', type: 'checkbox', required: false, hint: '显示尝试详情' }
+                ]
+            },
+            'gobuster': {
+                name: 'Gobuster',
+                icon: 'fa-folder-open',
+                description: '快速目录/文件/DNS暴力破解工具',
+                category: 'Web Application Analysis',
+                command: 'gobuster',
+                parameters: [
+                    { name: '扫描模式', flag: '', type: 'select', options: [
+                        { value: 'dir', label: '目录扫描 (dir)' },
+                        { value: 'dns', label: 'DNS子域名枚举 (dns)' },
+                        { value: 'vhost', label: 'VHost扫描 (vhost)' },
+                        { value: 'fuzz', label: '模糊测试 (fuzz)' }
+                    ], required: true, hint: '选择扫描模式' },
+                    { name: '目标URL', flag: '-u', type: 'text', placeholder: 'http://target.com', required: false, hint: '目标URL（dir/vhost/fuzz模式）' },
+                    { name: '目标域名', flag: '-d', type: 'text', placeholder: 'example.com', required: false, hint: '目标域名（dns模式）' },
+                    { name: '字典文件', flag: '-w', type: 'text', placeholder: '/usr/share/wordlists/dirb/common.txt', required: true, hint: '字典文件路径' },
+                    { name: '线程数', flag: '-t', type: 'number', placeholder: '10', required: false, hint: '并行线程数' },
+                    { name: '输出文件', flag: '-o', type: 'text', placeholder: 'result.txt', required: false, hint: '保存结果到文件' },
+                    { name: '文件扩展名', flag: '-x', type: 'text', placeholder: 'php,html,asp', required: false, hint: '要查找的文件扩展名（逗号分隔）' }
+                ]
+            },
+            'nikto': {
+                name: 'Nikto',
+                icon: 'fa-shield-alt',
+                description: 'Web服务器漏洞扫描器',
+                category: 'Vulnerability Analysis',
+                command: 'nikto',
+                parameters: [
+                    { name: '目标URL', flag: '-h', type: 'text', placeholder: 'http://target.com', required: true, hint: '目标URL' },
+                    { name: 'SSL', flag: '-ssl', type: 'checkbox', required: false, hint: '强制使用SSL/HTTPS' },
+                    { name: '端口', flag: '-p', type: 'text', placeholder: '8080', required: false, hint: '指定端口号' },
+                    { name: '扫描类型', flag: '-Tuning', type: 'select', options: [
+                        { value: '1', label: '类型1: 文件问题' },
+                        { value: '2', label: '类型2: 配置错误' },
+                        { value: '3', label: '类型3: 信息泄露' },
+                        { value: '4', label: '类型4: 注入XSS等' },
+                        { value: '5', label: '类型5: 远程文件包含' },
+                        { value: '9', label: '类型9: 代理感知' },
+                        { value: 'a', label: '类型a: 所有' }
+                    ], required: false, hint: '选择扫描类型' },
+                    { name: '输出文件', flag: '-o', type: 'text', placeholder: 'nikto_result.txt', required: false, hint: '保存结果' },
+                    { name: '更新', flag: '-update', type: 'checkbox', required: false, hint: '更新数据库' }
+                ]
+            },
+            'aircrack-ng': {
+                name: 'Aircrack-ng',
+                icon: 'fa-wifi',
+                description: 'WiFi网络安全工具套件',
+                category: 'Wireless Attacks',
+                command: 'aircrack-ng',
+                parameters: [
+                    { name: '握手包文件', flag: '', type: 'text', placeholder: '/root/capture.cap', required: true, hint: '包含握手包的cap/pcap文件' },
+                    { name: '密码字典', flag: '-w', type: 'text', placeholder: '/usr/share/wordlists/rockyou.txt', required: true, hint: '密码字典文件' },
+                    { name: 'BSSID', flag: '-b', type: 'text', placeholder: 'AA:BB:CC:DD:EE:FF', required: false, hint: '指定BSSID' },
+                    { name: 'ESSID', flag: '-e', type: 'text', placeholder: 'NetworkName', required: false, hint: '指定ESSID' }
+                ]
+            },
+            'john': {
+                name: 'John the Ripper',
+                icon: 'fa-lock-open',
+                description: '快速密码破解工具',
+                category: 'Password Attacks',
+                command: 'john',
+                parameters: [
+                    { name: '哈希文件', flag: '', type: 'text', placeholder: '/root/hashes.txt', required: true, hint: '包含哈希值的文件' },
+                    { name: '密码字典', flag: '--wordlist', type: 'text', placeholder: '/usr/share/wordlists/rockyou.txt', required: false, hint: '密码字典文件' },
+                    { name: '哈希格式', flag: '--format', type: 'select', options: [
+                        { value: 'auto', label: '自动检测' },
+                        { value: 'md5', label: 'MD5' },
+                        { value: 'sha1', label: 'SHA1' },
+                        { value: 'sha256', label: 'SHA256' },
+                        { value: 'bcrypt', label: 'bcrypt' },
+                        { value: 'nt', label: 'NT LM' }
+                    ], required: false, hint: '指定哈希格式' },
+                    { name: '显示结果', flag: '--show', type: 'checkbox', required: false, hint: '显示已破解的密码' },
+                    { name: '使用规则', flag: '--rules', type: 'checkbox', required: false, hint: '启用字典规则' }
+                ]
+            },
+            'netcat': {
+                name: 'Netcat',
+                icon: 'fa-network-wired',
+                description: '网络瑞士军刀',
+                category: 'System Utilities',
+                command: 'nc',
+                parameters: [
+                    { name: '模式', flag: '', type: 'select', options: [
+                        { value: 'listen', label: '监听模式' },
+                        { value: 'connect', label: '连接模式' }
+                    ], required: true, hint: '选择模式' },
+                    { name: '目标IP', flag: '', type: 'text', placeholder: '192.168.1.1', required: false, hint: '目标IP（连接模式）' },
+                    { name: '端口', flag: '-p', type: 'number', placeholder: '4444', required: true, hint: '端口号' },
+                    { name: '详细输出', flag: '-v', type: 'checkbox', required: false, hint: '显示详细信息' },
+                    { name: '监听所有端口', flag: '-l', type: 'checkbox', required: false, hint: '监听模式标志' },
+                    { name: '不解析DNS', flag: '-n', type: 'checkbox', required: false, hint: '不进行DNS解析' },
+                    { name: '反弹Shell', flag: '-e', type: 'text', placeholder: '/bin/bash 或 cmd.exe', required: false, hint: '重定向程序到连接' }
+                ]
+            },
+            'gdb': {
+                name: 'GDB',
+                icon: 'fa-bug',
+                description: 'GNU调试器',
+                category: 'Reverse Engineering',
+                command: 'gdb',
+                parameters: [
+                    { name: '可执行文件', flag: '', type: 'text', placeholder: '/path/to/binary', required: true, hint: '要调试的程序' },
+                    { name: '附加进程ID', flag: '-p', type: 'number', placeholder: '1234', required: false, hint: '附加到已运行的进程' },
+                    { name: '命令', flag: '-ex', type: 'text', placeholder: 'run 或 break main', required: false, hint: '初始GDB命令（可多次使用）' }
+                ]
+            }
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTools();
+            initializeCategories();
+        });
+
+        function initializeCategories() {
+            const categories = {
+                'Information Gathering': { icon: 'fa-search', tools: ['nmap'] },
+                'Web Application Analysis': { icon: 'fa-globe', tools: ['sqlmap', 'gobuster', 'nikto'] },
+                'Password Attacks': { icon: 'fa-key', tools: ['hydra', 'john'] },
+                'Wireless Attacks': { icon: 'fa-wifi', tools: ['aircrack-ng'] },
+                'System Utilities': { icon: 'fa-cog', tools: ['netcat'] },
+                'Reverse Engineering': { icon: 'fa-bug', tools: ['gdb'] }
+            };
+
+            const categoryList = document.getElementById('categoryList');
+            categoryList.innerHTML = '';
+
+            for (const [category, data] of Object.entries(categories)) {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'category-item';
+                categoryDiv.innerHTML = `
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <i class="fas ${data.icon} category-icon"></i>
+                        <div class="category-info">
+                            <div class="category-name">${category}</div>
+                            <div class="category-count">${data.tools.length} 个工具</div>
+                        </div>
+                        <i class="fas fa-chevron-right category-arrow"></i>
+                    </div>
+                    <div class="tool-list">
+                        ${data.tools.map(tool => {
+                            const toolDef = TOOL_DEFINITIONS[tool];
+                            return `
+                                <div class="tool-item" onclick="selectTool('${tool}')" data-tool="${tool}">
+                                    <div class="tool-name">
+                                        <span class="tool-status"></span>
+                                        ${toolDef.name}
+                                    </div>
+                                    <div class="tool-desc">${toolDef.description}</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+                categoryList.appendChild(categoryDiv);
+            }
+        }
+
+        function toggleCategory(header) {
+            header.classList.toggle('active');
+        }
+
+        function selectTool(toolKey) {
+            // Update selection UI
+            document.querySelectorAll('.tool-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            document.querySelector(`[data-tool="${toolKey}"]`).classList.add('selected');
+
+            // Show config
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('toolConfig').style.display = 'block';
+            document.getElementById('toolConfig').classList.add('fade-in');
+
+            const tool = TOOL_DEFINITIONS[toolKey];
+            selectedTool = toolKey;
+
+            // Update header
+            document.getElementById('toolIcon').className = `fas ${tool.icon} tool-title-icon`;
+            document.getElementById('toolName').textContent = tool.name;
+            document.getElementById('toolDescription').textContent = tool.description;
+
+            // Generate form
+            generateForm(tool);
+
+            // Update command preview
+            updateCommandPreview();
+        }
+
+        function generateForm(tool) {
+            const container = document.getElementById('formContainer');
+            container.innerHTML = '';
+
+            const section = document.createElement('div');
+            section.className = 'form-section';
+
+            let html = `
+                <div class="form-section-title">
+                    <i class="fas fa-cog"></i>
+                    参数配置
+                </div>
+            `;
+
+            tool.parameters.forEach((param, index) => {
+                html += generateFormField(param, index);
+            });
+
+            section.innerHTML = html;
+            container.appendChild(section);
+
+            // Add event listeners
+            tool.parameters.forEach((param, index) => {
+                const element = document.getElementById(`param-${index}`);
+                if (element) {
+                    if (param.type === 'checkbox') {
+                        element.addEventListener('change', updateCommandPreview);
+                    } else {
+                        element.addEventListener('input', updateCommandPreview);
+                    }
+                }
+            });
+        }
+
+        function generateFormField(param, index) {
+            let html = `<div class="form-group">`;
+
+            // Label
+            html += `
+                <label class="form-label">
+                    ${param.name}
+                    ${param.required ? '<span class="required-mark">*</span>' : ''}
+                </label>
+            `;
+
+            switch (param.type) {
+                case 'text':
+                    html += `
+                        <input type="text"
+                               class="form-input"
+                               id="param-${index}"
+                               placeholder="${param.placeholder || ''}"
+                               data-flag="${param.flag}">
+                    `;
+                    break;
+
+                case 'number':
+                    html += `
+                        <input type="number"
+                               class="form-input"
+                               id="param-${index}"
+                               placeholder="${param.placeholder || ''}"
+                               data-flag="${param.flag}">
+                    `;
+                    break;
+
+                case 'select':
+                    html += `
+                        <select class="form-input" id="param-${index}" data-flag="${param.flag}">
+                            <option value="">-- 选择 --</option>
+                            ${param.options.map(opt => `
+                                <option value="${opt.value}">${opt.label}</option>
+                            `).join('')}
+                        </select>
+                    `;
+                    break;
+
+                case 'checkbox':
+                    html += `
+                        <label class="checkbox-item" id="checkbox-${index}">
+                            <input type="checkbox" id="param-${index}" data-flag="${param.flag}">
+                            <i class="fas fa-check checkbox-icon"></i>
+                            <span>启用此选项</span>
+                        </label>
+                    `;
+                    // Add click handler for visual feedback
+                    setTimeout(() => {
+                        const checkbox = document.getElementById(`checkbox-${index}`);
+                        if (checkbox) {
+                            checkbox.addEventListener('click', () => {
+                                checkbox.classList.toggle('selected');
+                            });
+                        }
+                    }, 0);
+                    break;
+            }
+
+            if (param.hint) {
+                html += `<div class="form-hint">${param.hint}</div>`;
+            }
+
+            html += `</div>`;
+            return html;
+        }
+
+        function updateCommandPreview() {
+            if (!selectedTool) return;
+
+            const tool = TOOL_DEFINITIONS[selectedTool];
+            let command = tool.command;
+            const parts = [];
+
+            tool.parameters.forEach((param, index) => {
+                const element = document.getElementById(`param-${index}`);
+                if (!element) return;
+
+                let value;
+                if (param.type === 'checkbox') {
+                    if (element.checked) {
+                        // Special handling for certain flags
+                        if (param.flag.startsWith('-D')) {
+                            const dbElement = document.getElementById(`param-${index + 1}`);
+                            if (dbElement && dbElement.value) {
+                                parts.push(`-D ${dbElement.value} --tables`);
+                            }
+                        } else {
+                            parts.push(param.flag);
+                        }
+                    }
+                } else {
+                    value = element.value.trim();
+                    if (value) {
+                        if (param.flag) {
+                            // Check if it's a combined flag like "-sV"
+                            if (param.flag.match(/^-[a-zA-Z]$/)) {
+                                parts.push(`${param.flag}${value}`);
+                            } else {
+                                parts.push(`${param.flag} ${value}`);
+                            }
+                        } else {
+                            parts.push(value);
+                        }
+                    }
+                }
+            });
+
+            command += ' ' + parts.join(' ');
+            document.getElementById('commandPreview').textContent = '$ ' + command;
+        }
+
+        function executeTool() {
+            if (isExecuting) return;
+
+            const command = document.getElementById('commandPreview').textContent.replace('$ ', '');
+
+            if (!command || command === selectedTool) {
+                addOutput('请填写必填参数', 'warning');
+                return;
+            }
+
+            isExecuting = true;
+            updateExecutionState(true);
+
+            addOutput(`[Command] ${command}`, 'command');
+
+            fetch('/execute', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ command: command })
+            })
+            .then(response => {
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
+                function read() {
+                    reader.read().then(({ done, value }) => {
+                        if (done) {
+                            isExecuting = false;
+                            updateExecutionState(false);
+                            return;
+                        }
+
+                        const text = decoder.decode(value);
+                        const lines = text.split('\n');
+
+                        lines.forEach(line => {
+                            if (line.startsWith('data: ')) {
+                                try {
+                                    const data = JSON.parse(line.substring(6));
+                                    if (data.type === 'output') {
+                                        addOutput(data.data, 'result');
+                                    } else if (data.type === 'status') {
+                                        if (data.status === 'completed') {
+                                            addOutput(`\n[✓] 命令完成，退出码: ${data.exit_code}`, 'success');
+                                        } else if (data.status === 'error') {
+                                            addOutput(`[✗] 错误: ${data.error}`, 'error');
+                                        }
+                                    }
+                                } catch (e) {
+                                    // Ignore parse errors
+                                }
+                            }
+                        });
+
+                        read();
+                    });
+                }
+
+                read();
+            })
+            .catch(error => {
+                addOutput(`[✗] 连接错误: ${error.message}`, 'error');
+                isExecuting = false;
+                updateExecutionState(false);
+            });
+
+            // Add to history
+            executionHistory.push({
+                tool: selectedTool,
+                command: command,
+                timestamp: new Date().toISOString()
+            });
+        }
+
+        function stopExecution() {
+            if (!isExecuting) return;
+
+            addOutput('\n[⚠] 正在停止执行...', 'warning');
+            // Note: In production, you'd need to implement actual process termination
+            isExecuting = false;
+            updateExecutionState(false);
+        }
+
+        function updateExecutionState(running) {
+            const executeBtn = document.getElementById('executeBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const statusDot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+
+            executeBtn.disabled = running;
+            stopBtn.style.display = running ? 'inline-flex' : 'none';
+            statusDot.classList.toggle('running', running);
+            statusText.textContent = running ? '执行中' : '空闲';
+        }
+
+        function addOutput(text, type = 'result') {
+            const terminal = document.getElementById('terminalOutput');
+            const line = document.createElement('div');
+            line.className = `output-line ${type}`;
+            line.textContent = text;
+            terminal.appendChild(line);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        function clearTerminal() {
+            const terminal = document.getElementById('terminalOutput');
+            terminal.innerHTML = '<div class="output-line info">[System] 终端已清空</div>';
+        }
+
+        function copyOutput() {
+            const terminal = document.getElementById('terminalOutput');
+            const text = Array.from(terminal.querySelectorAll('.output-line'))
+                .map(line => line.textContent)
+                .join('\n');
+
+            navigator.clipboard.writeText(text).then(() => {
+                addOutput('[✓] 输出已复制到剪贴板', 'success');
+            });
+        }
+
+        function downloadOutput() {
+            const terminal = document.getElementById('terminalOutput');
+            const text = Array.from(terminal.querySelectorAll('.output-line'))
+                .map(line => line.textContent)
+                .join('\n');
+
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `kali_output_${Date.now()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function handleQuickCommand(event) {
+            if (event.key === 'Enter') {
+                executeQuickCommand();
+            }
+        }
+
+        function executeQuickCommand() {
+            const input = document.getElementById('quickCommand');
+            const command = input.value.trim();
+
+            if (!command) return;
+
+            addOutput(`$ ${command}`, 'command');
+
+            fetch('/execute', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ command: command })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    addOutput(`[✗] ${data.error}`, 'error');
+                }
+            })
+            .catch(error => {
+                addOutput(`[✗] ${error.message}`, 'error');
+            });
+
+            input.value = '';
+        }
+
+        function resetForm() {
+            if (!selectedTool) return;
+
+            const tool = TOOL_DEFINITIONS[selectedTool];
+            tool.parameters.forEach((param, index) => {
+                const element = document.getElementById(`param-${index}`);
+                if (element) {
+                    if (param.type === 'checkbox') {
+                        element.checked = false;
+                        const checkbox = document.getElementById(`checkbox-${index}`);
+                        if (checkbox) checkbox.classList.remove('selected');
+                    } else {
+                        element.value = '';
+                    }
+                }
+            });
+
+            updateCommandPreview();
+        }
+
+        function filterTools() {
+            const searchTerm = document.getElementById('toolSearch').value.toLowerCase();
+
+            document.querySelectorAll('.tool-item').forEach(item => {
+                const toolKey = item.dataset.tool;
+                const tool = TOOL_DEFINITIONS[toolKey];
+                const matches = tool.name.toLowerCase().includes(searchTerm) ||
+                               tool.description.toLowerCase().includes(searchTerm) ||
+                               toolKey.toLowerCase().includes(searchTerm);
+                item.style.display = matches ? 'block' : 'none';
+            });
+        }
+
+        function loadTools() {
+            addOutput('[System] 正在加载工具列表...', 'info');
+
+            fetch('/tools')
+                .then(response => response.json())
+                .then(data => {
+                    toolsData = data;
+                    addOutput(`[✓] 已加载工具分类: ${Object.keys(data).length}`, 'success');
+
+                    // Expand first category
+                    const firstCategory = document.querySelector('.category-header');
+                    if (firstCategory) {
+                        firstCategory.classList.add('active');
+                    }
+                })
+                .catch(error => {
+                    addOutput(`[✗] 加载工具失败: ${error.message}`, 'error');
+                });
+        }
+
+        function toggleView(view) {
+            if (view === 'classic') {
+                window.location.href = '/';
+            }
+        }
+    </script>
+</body>
+</html>

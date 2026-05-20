@@ -1,348 +1,293 @@
-# Kali Command Center
+# Kali Command Center - 使用指南
 
-🔥 **Kali Command Center** - 智能化Kali工具管理与远程执行平台
+## 概述
 
-## 项目简介
+Kali Command Center 是一个强大的Web界面，允许你从任何系统远程访问和管理你的Kali Linux工具。它会自动检测已安装的Kali工具，提供详细的使用说明，并允许你实时执行命令。
 
-Kali Command Center 是一个基于Web的Kali Linux工具管理界面，专为VMware环境设计。它能够自动检测系统中已安装的Kali工具，并提供详细的使用指南，让用户可以通过浏览器远程执行Kali工具，同时实时查看命令输出结果。
-
-### 核心特性
-
-✅ **自动工具检测** - 首次运行时自动扫描并识别系统中已安装的Kali工具  
-✅ **详细使用指南** - 为每个工具提供完整的使用说明、示例和使用技巧  
-✅ **实时命令执行** - 通过浏览器执行命令，实时显示输出结果  
-✅ **傻瓜式操作** - 点击工具即可查看详细使用说明，一键执行  
-✅ **命令历史记录** - 自动保存历史命令，方便重复使用  
-✅ **分类工具管理** - 按功能分类组织工具，易于查找  
-
-## 系统要求
-
-- Kali Linux (推荐)
-- Python 3.7+
-- Flask Web框架
-- VMware或虚拟机环境（可选）
+---
 
 ## 快速开始
 
-### 1. 安装依赖
+### 1. 在Kali Linux中启动服务
 
 ```bash
 cd /workspace/kali-command-center
-pip3 install -r requirements.txt
-```
-
-### 2. 启动服务
-
-```bash
-# 方式一：使用启动脚本
-./start.sh
-
-# 方式二：直接运行
 python3 app.py
 ```
 
-### 3. 访问界面
-
-服务启动后，在浏览器中访问：
-
-- **Kali本机**: http://localhost:5000
-- **VMware宿主机**: http://192.168.x.x:5000
-- **其他设备**: http://<kali-ip>:5000
-
-## 使用指南
-
-### 界面布局
-
-```
-┌─────────────────────────────────────────────────────────┐
-│  🐉 Kali Command Center                                │
-├──────────────┬──────────────────────────────────────────┤
-│ 🔍 搜索工具   │                                          │
-├──────────────┤  🔥 Kali Command Center 已启动            │
-│              │  ⚡ 正在检测已安装的工具...                 │
-│ ⚡ 工具列表   │                                          │
-│              │  $ nmap -sV 192.168.1.1                  │
-│ 🔍 信息收集   │  Starting Nmap...                        │
-│  ├ Nmap     │                                          │
-│  └ NetDisc  │                                          │
-│              │  $ _                                     │
-│ 🌐 Web应用   │                                          │
-│  ├ SQLMap   │  ┌─────────────────────────────────────┐  │
-│  └ Gobuster │  │ 📝 Nmap 使用指南                    │  │
-│              │  │ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ │  │
-│ 🔐 密码攻击   │  │ 💻 基本用法                        │  │
-│  ├ Hydra    │  │ nmap [扫描类型] [选项] {目标}        │  │
-│  └ John     │  │                                     │  │
-│              │  │ 📋 使用示例                        │  │
-│ ...         │  │ ▶ nmap -sV 192.168.1.1            │  │
-│              │  │ ▶ nmap -sC -sV -p- 192.168.1.1    │  │
-│              │  └─────────────────────────────────────┘  │
-└──────────────┴──────────────────────────────────────────┘
+或者使用启动脚本：
+```bash
+cd /workspace/kali-command-center
+./start.sh
 ```
 
-### 主要功能
+### 2. 从其他系统访问
 
-#### 1. 自动工具检测
+服务启动后，你可以通过以下地址访问：
 
-系统启动时自动检测已安装的工具，包括：
+| 访问方式 | URL | 说明 |
+|---------|-----|------|
+| Kali本机 | http://127.0.0.1:5000 | 在Kali内部访问 |
+| VMware宿主机 | http://<Kali_IP>:5000 | 替换为Kali的实际IP地址 |
+| 局域网其他设备 | http://<Kali_IP>:5000 | 需要网络连通 |
 
-- 🔍 **Information Gathering** - 信息收集 (Nmap, Netdiscover等)
-- 🌐 **Web Application Analysis** - Web应用分析 (SQLMap, Gobuster等)
-- 🔐 **Password Attacks** - 密码攻击 (Hydra, John等)
-- ⚠️ **Vulnerability Analysis** - 漏洞分析 (Nikto等)
-- 💀 **Exploitation Tools** - 漏洞利用 (Metasploit等)
-- 👂 **Sniffing & Spoofing** - 嗅探与欺骗 (Wireshark等)
-- 📶 **Wireless Attacks** - 无线攻击 (Aircrack-ng等)
-- 🎯 **Post Exploitation** - 后渗透 (Mimikatz等)
-- 🔬 **Forensics** - 数字取证 (Autopsy等)
-- 🔧 **Reverse Engineering** - 逆向工程 (Radare2等)
-- ⚙️ **System Utilities** - 系统工具 (Netcat, Curl等)
+启动时，终端会显示所有可用的访问地址。
 
-#### 2. 查看工具详情
+---
 
-点击任意工具，系统会显示：
+## 网络配置（重要！）
 
-- 📝 **工具简介** - 工具的功能描述
-- 💻 **基本用法** - 标准命令格式
-- 📋 **使用示例** - 实际使用命令和说明
-- 💡 **使用技巧** - 专业用户的经验分享
-- 🔧 **常用选项** - 命令行参数说明
+### 1. 确认Kali Linux的IP地址
 
-#### 3. 执行命令
-
-**方式一：直接输入**
-- 在底部命令输入框中输入命令
-- 按 `Enter` 或点击 "执行" 按钮
-
-**方式二：使用工具**
-- 点击左侧工具
-- 查看使用说明
-- 点击 "使用此命令" 或 "执行" 按钮
-
-#### 4. 键盘快捷键
-
-- `Enter` - 执行命令
-- `↑ / ↓` - 浏览历史命令
-- `Tab` - 显示当前工具帮助
-- `Ctrl + L` - 清空终端
-
-### API接口
-
-#### 获取已安装的工具列表
+在Kali终端中执行：
 
 ```bash
+ip addr show
+# 或
+ifconfig
+```
+
+找到你的网络接口（通常是 eth0 或 ens33），记录IP地址（例如：192.168.1.100）。
+
+### 2. 配置VMware网络（如果需要）
+
+如果你在VMware中运行Kali：
+
+- **NAT模式**：宿主机可以访问Kali，但局域网其他设备可能无法访问
+- **桥接模式**：局域网所有设备都可以访问Kali（推荐）
+
+### 3. 配置防火墙（如果需要）
+
+如果无法访问，可能需要开放5000端口：
+
+```bash
+# 开放5000端口
+ufw allow 5000
+
+# 或者使用iptables
+iptables -A INPUT -p tcp --dport 5000 -j ACCEPT
+```
+
+---
+
+## 功能说明
+
+### 1. 自动工具检测
+
+系统会自动扫描Kali已安装的工具，包括：
+- 信息收集工具（Nmap, Netdiscover等）
+- Web应用分析工具（SQLMap, Gobuster等）
+- 密码攻击工具（Hydra, John等）
+- 无线攻击工具（Aircrack-ng等）
+- 漏洞利用工具（Metasploit等）
+- 系统工具
+
+### 2. 详细使用指南
+
+每个工具都包含：
+- 📝 工具简介
+- 💻 基本用法
+- 📋 具体使用示例
+- 💡 使用技巧
+- 🔧 常用命令选项
+
+### 3. 实时命令执行
+
+- 在终端输入框直接输入命令
+- 从工具列表选择工具并使用示例
+- 实时显示命令执行结果
+- 命令历史记录
+- 支持搜索工具
+
+---
+
+## 界面说明
+
+### 左侧工具栏
+- 搜索框：快速搜索工具
+- 工具分类：按功能分类显示
+- 工具列表：点击查看详情
+
+### 主终端区域
+- 命令输出显示区
+- 命令输入框
+- 执行、清除按钮
+
+### 右侧历史记录
+- 查看历史命令
+- 点击重复使用
+
+### 底部工具详情
+- 工具使用说明
+- 示例命令
+- 一键执行示例
+
+---
+
+## 使用示例
+
+### 示例1: 使用Nmap扫描
+
+1. 在左侧工具栏找到 `Information Gathering`
+2. 点击 `Nmap`
+3. 在工具详情中选择示例：`nmap -sV 192.168.1.1`
+4. 点击执行
+5. 查看实时扫描结果
+
+### 示例2: 使用SQLMap测试注入
+
+1. 在左侧工具栏找到 `Web Application Analysis`
+2. 点击 `SQLMap`
+3. 查看使用示例
+4. 复制命令到输入框，修改目标URL
+5. 执行并查看结果
+
+### 示例3: 使用Hydra暴力破解
+
+1. 在左侧工具栏找到 `Password Attacks`
+2. 点击 `Hydra`
+3. 选择合适的示例
+4. 配置用户名、密码列表、目标
+5. 执行攻击
+
+---
+
+## 键盘快捷键
+
+| 快捷键 | 功能 |
+|--------|------|
+| Enter | 执行命令 |
+| ↑ | 上一条历史命令 |
+| ↓ | 下一条历史命令 |
+| Tab | 显示当前工具帮助 |
+| Ctrl+L | 清空终端 |
+
+---
+
+## API接口
+
+### 获取工具列表
+```
 GET /tools
 ```
 
-#### 获取工具详细信息
-
-```bash
-GET /tools/<tool_key>
+### 获取工具详情
+```
+GET /tools/<tool_name>
 ```
 
-#### 搜索工具
-
-```bash
-GET /tools/search?q=<关键词>
+### 搜索工具
+```
+GET /tools/search?q=<keyword>
 ```
 
-#### 执行命令
-
-```bash
+### 执行命令
+```
 POST /execute
 Content-Type: application/json
-
 {
   "command": "nmap -sV 192.168.1.1"
 }
 ```
 
-#### 获取命令历史
-
-```bash
+### 获取命令历史
+```
 GET /history
 ```
 
-### 工具使用示例
+---
 
-#### Nmap - 网络扫描
+## 安全警告
 
-```bash
-# 基本端口扫描
-nmap 192.168.1.1
+⚠️ **重要安全提醒**：
 
-# 版本检测
-nmap -sV 192.168.1.1
-
-# 完整扫描
-nmap -sC -sV -p- 192.168.1.1
-
-# 操作系统检测
-nmap -O 192.168.1.1
-
-# 漏洞扫描
-nmap --script vuln 192.168.1.1
-```
-
-#### SQLMap - SQL注入
-
-```bash
-# 检测SQL注入
-sqlmap -u "http://target.com/?id=1"
-
-# 获取数据库
-sqlmap -u "http://target.com/?id=1" --dbs
-
-# 获取表
-sqlmap -u "http://target.com/?id=1" -D dbname --tables
-
-# 获取Shell
-sqlmap -u "http://target.com/?id=1" --os-shell
-```
-
-#### Hydra - 暴力破解
-
-```bash
-# SSH暴力破解
-hydra -l admin -P passwords.txt ssh://192.168.1.1
-
-# Web表单破解
-hydra -L users.txt -P passwords.txt http-post-form://target.com/login
-
-# FTP破解
-hydra -l root -P passwords.txt ftp://192.168.1.1
-```
-
-#### Gobuster - 目录扫描
-
-```bash
-# 目录扫描
-gobuster dir -u http://target.com -w /usr/share/wordlists/dirb/common.txt
-
-# DNS子域名枚举
-gobuster dns -d target.com -w /usr/share/wordlists/subdomains.txt
-
-# VHost扫描
-gobuster vhost -u http://target.com -w subdomains.txt
-```
-
-## 项目结构
-
-```
-kali-command-center/
-├── app.py                      # Flask后端主程序
-├── kali_tools_detector.py       # 工具检测模块
-├── requirements.txt             # Python依赖
-├── start.sh                    # 启动脚本
-├── README.md                   # 说明文档
-└── templates/
-    └── index.html              # Web前端界面
-```
-
-## 扩展工具库
-
-### 添加新工具
-
-编辑 `kali_tools_detector.py` 中的 `TOOLS_DATABASE` 字典：
-
-```python
-'Your Category': {
-    'description': '分类描述',
-    'icon': '🔧',
-    'tools': {
-        'tool_name': {
-            'name': '工具显示名称',
-            'command': '基本命令',
-            'description': '工具描述',
-            'usage': '使用方法',
-            'examples': [
-                {'cmd': '示例命令', 'desc': '说明'},
-            ],
-            'tips': ['使用技巧'],
-            'common_options': {
-                '-flag': '选项说明',
-            }
-        }
-    }
-}
-```
-
-### 自定义工具检测
-
-工具检测会自动检查 `which` 命令是否成功，只需确保工具已安装并位于PATH中即可。
-
-## 注意事项
-
-⚠️ **安全警告**
-
-- 仅在合法授权的情况下使用
-- 遵守当地法律法规
-- 禁止未授权的网络扫描和渗透测试
-
-## 故障排除
-
-### 服务无法启动
-
-```bash
-# 检查端口占用
-netstat -tulnp | grep 5000
-
-# 杀死占用进程
-kill -9 <PID>
-```
-
-### 工具检测失败
-
-```bash
-# 手动检测工具
-which nmap
-which sqlmap
-which hydra
-
-# 安装缺失工具
-apt-get update
-apt-get install nmap sqlmap hydra
-```
-
-### Web界面无法访问
-
-```bash
-# 检查防火墙
-iptables -L
-
-# 开放端口（如果需要）
-iptables -A INPUT -p tcp --dport 5000 -j ACCEPT
-```
-
-## 技术栈
-
-- **后端**: Python 3, Flask
-- **前端**: HTML5, CSS3, JavaScript
-- **通信**: Server-Sent Events (SSE), JSON
-- **命令执行**: subprocess, bash
-
-## 版本历史
-
-### v1.0.0 (2024)
-- ✅ 自动工具检测
-- ✅ 详细使用指南
-- ✅ 实时命令执行
-- ✅ 命令历史记录
-- ✅ 工具搜索功能
-- ✅ 响应式界面设计
-
-## 贡献
-
-欢迎提交Issue和Pull Request！
-
-## 许可证
-
-MIT License
-
-## 联系方式
-
-如有问题，请通过GitHub Issues联系我们。
+1. 仅在授权范围内使用！
+2. 不要在生产环境中直接暴露服务！
+3. 建议在安全隔离的网络中使用！
+4. 使用后请及时关闭服务！
+5. 遵守当地法律法规！
 
 ---
 
-**Made with ❤️ for Kali Linux users**
+## 故障排除
+
+### 问题1: 无法从其他系统访问
+
+**可能原因**：防火墙阻止了连接
+
+**解决方案**：
+```bash
+# 检查防火墙状态
+ufw status
+
+# 开放5000端口
+ufw allow 5000
+```
+
+### 问题2: 工具检测不到
+
+**可能原因**：工具未安装
+
+**解决方案**：
+```bash
+# 安装缺失的工具
+apt install nmap
+apt install sqlmap
+# ... 等等
+```
+
+### 问题3: 命令执行没有输出
+
+**可能原因**：命令需要很长时间运行，或者需要交互输入
+
+**解决方案**：检查命令是否正确，或者使用非交互式版本
+
+---
+
+## 扩展功能
+
+### 添加自定义工具
+
+编辑 `/workspace/kali-command-center/kali_tools_detector.py` 中的 `TOOLS_DATABASE` 字典，按照现有格式添加。
+
+### 修改端口
+
+在 `app.py` 中修改 `port = 5000` 为你想要的端口号。
+
+---
+
+## 支持的工具分类
+
+- 🔍 信息收集（Information Gathering）
+- 🌐 Web应用分析（Web Application Analysis）
+- 🔐 密码攻击（Password Attacks）
+- 📶 无线攻击（Wireless Attacks）
+- 💀 漏洞利用（Exploitation Tools）
+- 👂 嗅探与欺骗（Sniffing & Spoofing）
+- 🎯 后渗透（Post Exploitation）
+- 🔬 取证（Forensics）
+- 🔧 逆向工程（Reverse Engineering）
+- ⚙️ 系统工具（System Utilities）
+- 🛠️ 其他工具（Additional Tools）
+
+---
+
+## 更新日志
+
+### v1.1.0
+- ✅ 自动工具检测
+- ✅ 详细使用指南
+- ✅ 外部网络访问支持
+- ✅ 更多工具覆盖
+- ✅ 搜索功能
+- ✅ 历史记录
+
+---
+
+## 联系与支持
+
+如有问题或建议，欢迎反馈！
+
+---
+
+**祝使用愉快！** 🚀

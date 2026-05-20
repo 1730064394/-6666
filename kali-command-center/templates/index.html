@@ -35,7 +35,6 @@
             flex-direction: column;
         }
 
-        /* Header */
         .header {
             background: var(--bg-panel);
             border-bottom: 1px solid var(--border-color);
@@ -65,7 +64,7 @@
 
         .status-bar {
             display: flex;
-            gap: 20px;
+            gap: 16px;
             align-items: center;
         }
 
@@ -90,16 +89,14 @@
             50% { opacity: 0.5; }
         }
 
-        /* Main Layout */
         .main-container {
             display: flex;
             flex: 1;
             overflow: hidden;
         }
 
-        /* Sidebar */
         .sidebar {
-            width: 280px;
+            width: 320px;
             background: var(--bg-panel);
             border-right: 1px solid var(--border-color);
             display: flex;
@@ -108,13 +105,25 @@
         }
 
         .sidebar-header {
-            padding: 16px;
+            padding: 12px 16px;
             border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-title {
             font-weight: 600;
             font-size: 14px;
             color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        }
+
+        .tool-count {
+            background: var(--bg-input);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            color: var(--accent-blue);
         }
 
         .tools-list {
@@ -124,48 +133,112 @@
         }
 
         .tool-category {
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
-        .category-title {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--accent-purple);
-            text-transform: uppercase;
-            padding: 8px 8px 4px;
-            letter-spacing: 0.5px;
-        }
-
-        .tool-btn {
-            width: 100%;
-            padding: 10px 12px;
-            background: var(--bg-input);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            color: var(--text-primary);
-            font-size: 13px;
-            cursor: pointer;
-            text-align: left;
-            margin-bottom: 4px;
-            transition: all 0.2s;
+        .category-header {
             display: flex;
             align-items: center;
             gap: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background 0.2s;
         }
 
-        .tool-btn:hover {
+        .category-header:hover {
+            background: var(--bg-input);
+        }
+
+        .category-icon {
+            font-size: 18px;
+        }
+
+        .category-name {
+            flex: 1;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .category-count {
+            font-size: 11px;
+            color: var(--text-secondary);
+            background: var(--bg-dark);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .category-description {
+            font-size: 11px;
+            color: var(--text-secondary);
+            padding-left: 36px;
+            margin-bottom: 4px;
+        }
+
+        .tool-items {
+            padding-left: 12px;
+        }
+
+        .tool-item {
+            padding: 10px 12px;
+            margin-bottom: 4px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .tool-item:hover {
             background: var(--bg-dark);
             border-color: var(--accent-blue);
             transform: translateX(4px);
         }
 
-        .tool-icon {
-            font-size: 16px;
-            opacity: 0.8;
+        .tool-item.selected {
+            border-color: var(--accent-green);
+            background: rgba(63, 185, 80, 0.1);
         }
 
-        /* Terminal Area */
-        .terminal-area {
+        .tool-name {
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .tool-desc {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .tool-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--accent-green);
+            color: white;
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .terminal-section {
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -180,7 +253,6 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 13px;
             line-height: 1.6;
-            border-bottom: 1px solid var(--border-color);
         }
 
         .output-line {
@@ -201,16 +273,11 @@
             color: var(--accent-blue);
         }
 
-        .output-line.warning {
-            color: var(--accent-orange);
-        }
-
         .timestamp {
             color: var(--text-secondary);
             font-size: 11px;
         }
 
-        /* Input Area */
         .input-area {
             background: var(--bg-panel);
             padding: 16px 20px;
@@ -245,10 +312,6 @@
 
         .command-input:focus {
             border-color: var(--accent-blue);
-        }
-
-        .command-input::placeholder {
-            color: var(--text-secondary);
         }
 
         .execute-btn {
@@ -290,7 +353,185 @@
             color: var(--accent-red);
         }
 
-        /* History Panel */
+        .help-panel {
+            background: var(--bg-panel);
+            border-top: 1px solid var(--border-color);
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .help-panel.active {
+            display: block;
+        }
+
+        .help-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--bg-panel);
+        }
+
+        .help-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .help-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .help-content {
+            padding: 20px;
+        }
+
+        .help-section {
+            margin-bottom: 20px;
+        }
+
+        .help-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent-purple);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .help-description {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .help-usage {
+            background: var(--bg-dark);
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--accent-orange);
+            margin-bottom: 12px;
+        }
+
+        .example-item {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 8px;
+        }
+
+        .example-cmd {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--accent-green);
+            margin-bottom: 4px;
+        }
+
+        .example-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .example-use-btn {
+            margin-top: 8px;
+            padding: 6px 12px;
+            background: var(--accent-blue);
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .example-use-btn:hover {
+            background: #4a9eff;
+        }
+
+        .tip-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .tip-icon {
+            color: var(--accent-orange);
+            font-size: 14px;
+        }
+
+        .option-item {
+            display: flex;
+            gap: 12px;
+            padding: 6px 0;
+            font-size: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .option-flag {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-blue);
+            min-width: 80px;
+        }
+
+        .option-desc {
+            color: var(--text-secondary);
+        }
+
+        .running-indicator {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--bg-input);
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        .running-indicator.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid var(--border-color);
+            border-top-color: var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .help-text {
+            margin-top: 12px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .help-text kbd {
+            background: var(--bg-input);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+        }
+
         .history-panel {
             position: fixed;
             right: -400px;
@@ -361,64 +602,6 @@
             color: var(--text-secondary);
         }
 
-        /* Status Indicator */
-        .running-indicator {
-            display: none;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: var(--bg-input);
-            border-radius: 20px;
-            font-size: 13px;
-        }
-
-        .running-indicator.active {
-            display: flex;
-        }
-
-        .spinner {
-            width: 14px;
-            height: 14px;
-            border: 2px solid var(--border-color);
-            border-top-color: var(--accent-blue);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Help Text */
-        .help-text {
-            margin-top: 12px;
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .help-text kbd {
-            background: var(--bg-input);
-            padding: 2px 6px;
-            border-radius: 4px;
-            border: 1px solid var(--border-color);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 220px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                display: none;
-            }
-        }
-
-        /* Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -436,6 +619,45 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--text-secondary);
         }
+
+        .search-box {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 13px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .empty-state {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-text {
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -447,7 +669,7 @@
         <div class="status-bar">
             <div class="status-item">
                 <div class="status-dot"></div>
-                <span>在线</span>
+                <span id="statusText">系统就绪</span>
             </div>
             <div class="running-indicator" id="runningIndicator">
                 <div class="spinner"></div>
@@ -459,56 +681,76 @@
 
     <div class="main-container">
         <aside class="sidebar">
-            <div class="sidebar-header">⚡ 快速工具</div>
+            <div class="search-box">
+                <input type="text" class="search-input" id="toolSearch" 
+                       placeholder="🔍 搜索工具..." onkeyup="filterTools()">
+            </div>
+            
+            <div class="sidebar-header">
+                <span class="sidebar-title">⚡ 工具列表</span>
+                <span class="tool-count" id="toolCount">0 个工具</span>
+            </div>
+            
             <div class="tools-list" id="toolsList">
-                <div style="padding: 20px; text-align: center; color: var(--text-secondary);">
-                    加载中...
+                <div class="empty-state">
+                    <div class="empty-icon">🔄</div>
+                    <div class="empty-text">正在加载工具...</div>
                 </div>
             </div>
         </aside>
 
-        <main class="terminal-area">
-            <div class="terminal-output" id="terminalOutput">
-                <div class="output-line info">
-                    <span class="timestamp">[System]</span> 🔥 Kali Command Center 已启动
-                </div>
-                <div class="output-line info">
-                    <span class="timestamp">[System]</span> ✓ 服务正常运行，等待命令输入...
-                </div>
-                <div class="output-line info">
-                    <span class="timestamp">[System]</span> 💡 提示：使用上方快捷工具或直接输入命令
-                </div>
-            </div>
+        <main class="main-content">
+            <div class="content-area">
+                <div class="terminal-section">
+                    <div class="terminal-output" id="terminalOutput">
+                        <div class="output-line info">
+                            <span class="timestamp">[System]</span> 🔥 Kali Command Center 已启动
+                        </div>
+                        <div class="output-line info">
+                            <span class="timestamp">[System]</span> ⚡ 正在检测已安装的工具...
+                        </div>
+                    </div>
 
-            <div class="input-area">
-                <div class="input-wrapper">
-                    <span class="prompt">$</span>
-                    <input type="text" class="command-input" id="commandInput" 
-                           placeholder="输入命令，例如: nmap -sV 192.168.1.1"
-                           onkeypress="handleKeyPress(event)">
-                    <button class="execute-btn" id="executeBtn" onclick="executeCommand()">
-                        执行
-                    </button>
-                    <button class="clear-btn" onclick="clearTerminal()">
-                        清除
-                    </button>
+                    <div class="input-area">
+                        <div class="input-wrapper">
+                            <span class="prompt">$</span>
+                            <input type="text" class="command-input" id="commandInput" 
+                                   placeholder="输入命令或点击左侧工具"
+                                   onkeypress="handleKeyPress(event)">
+                            <button class="execute-btn" id="executeBtn" onclick="executeCommand()">
+                                执行
+                            </button>
+                            <button class="clear-btn" onclick="clearTerminal()">
+                                清除
+                            </button>
+                        </div>
+                        <div class="help-text">
+                            💡 提示: <kbd>Enter</kbd> 执行 | <kbd>↑↓</kbd> 历史 | <kbd>Tab</kbd> 查看帮助 | <kbd>Ctrl+L</kbd> 清屏
+                        </div>
+                    </div>
                 </div>
-                <div class="help-text">
-                    💡 快捷键: <kbd>Enter</kbd> 执行命令 | <kbd>Ctrl+L</kbd> 清屏 | <kbd>↑</kbd><kbd>↓</kbd> 历史命令
+
+                <div class="help-panel" id="helpPanel">
+                    <div class="help-header">
+                        <span class="help-title" id="helpTitle">工具使用指南</span>
+                        <button class="help-close" onclick="closeHelp()">×</button>
+                    </div>
+                    <div class="help-content" id="helpContent">
+                    </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- History Panel -->
     <div class="history-panel" id="historyPanel">
         <div class="history-header">
             <span class="history-title">📜 执行历史</span>
             <button class="close-history" onclick="toggleHistory()">×</button>
         </div>
         <div class="history-list" id="historyList">
-            <div style="padding: 20px; text-align: center; color: var(--text-secondary);">
-                暂无历史记录
+            <div class="empty-state">
+                <div class="empty-icon">📭</div>
+                <div class="empty-text">暂无历史记录</div>
             </div>
         </div>
     </div>
@@ -517,54 +759,203 @@
         let commandHistory = [];
         let historyIndex = -1;
         let isExecuting = false;
-        let currentEventSource = null;
+        let detectedTools = {};
+        let selectedTool = null;
 
-        // 页面加载完成后
         document.addEventListener('DOMContentLoaded', function() {
             loadTools();
             loadHistory();
-            
-            // 聚焦到输入框
             document.getElementById('commandInput').focus();
         });
 
-        // 加载工具列表
         async function loadTools() {
             try {
-                const response = await fetch('/tools');
-                const tools = await response.json();
+                document.getElementById('statusText').textContent = '检测工具中...';
                 
-                const groupedTools = {};
-                tools.forEach(tool => {
-                    if (!groupedTools[tool.category]) {
-                        groupedTools[tool.category] = [];
-                    }
-                    groupedTools[tool.category].push(tool);
-                });
-
-                const toolsList = document.getElementById('toolsList');
-                toolsList.innerHTML = '';
-
-                Object.keys(groupedTools).forEach(category => {
-                    const categoryDiv = document.createElement('div');
-                    categoryDiv.className = 'tool-category';
-                    categoryDiv.innerHTML = `
-                        <div class="category-title">${category}</div>
-                        ${groupedTools[category].map(tool => `
-                            <button class="tool-btn" onclick="executeTool('${tool.name}', '${tool.command}')">
-                                <span class="tool-icon">▶</span>
-                                <span>${tool.name}</span>
-                            </button>
-                        `).join('')}
-                    `;
-                    toolsList.appendChild(categoryDiv);
-                });
+                const response = await fetch('/tools');
+                detectedTools = await response.json();
+                
+                let totalTools = 0;
+                for (const category in detectedTools) {
+                    totalTools += detectedTools[category].tools.length;
+                }
+                
+                document.getElementById('toolCount').textContent = `${totalTools} 个工具`;
+                renderTools(detectedTools);
+                
+                document.getElementById('statusText').textContent = `已加载 ${totalTools} 个工具`;
+                
+                addOutput(`<span class="timestamp">[System]</span> ✅ 检测到 ${totalTools} 个已安装的工具`, 'info');
+                addOutput(`<span class="timestamp">[System]</span> 💡 点击左侧工具查看使用说明并执行`, 'info');
+                
             } catch (error) {
                 console.error('加载工具失败:', error);
+                document.getElementById('statusText').textContent = '加载失败';
+                addOutput(`<span class="timestamp">[System]</span> ❌ 工具加载失败: ${error.message}`, 'error');
             }
         }
 
-        // 加载历史记录
+        function renderTools(tools) {
+            const toolsList = document.getElementById('toolsList');
+            toolsList.innerHTML = '';
+
+            for (const category in tools) {
+                const categoryData = tools[category];
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'tool-category';
+                categoryDiv.innerHTML = `
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <span class="category-icon">${categoryData.icon}</span>
+                        <span class="category-name">${category}</span>
+                        <span class="category-count">${categoryData.tools.length}</span>
+                    </div>
+                    <div class="category-description">${categoryData.description}</div>
+                    <div class="tool-items">
+                        ${categoryData.tools.map(tool => `
+                            <div class="tool-item" data-tool='${JSON.stringify(tool).replace(/'/g, "&#39;")}' 
+                                 onclick="selectTool(this, '${tool.key}')">
+                                <div class="tool-name">${tool.name}</div>
+                                <div class="tool-desc">${tool.description}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                toolsList.appendChild(categoryDiv);
+            }
+        }
+
+        function toggleCategory(header) {
+            const toolItems = header.nextElementSibling.nextElementSibling;
+            if (toolItems.style.display === 'none') {
+                toolItems.style.display = 'block';
+            } else {
+                toolItems.style.display = 'none';
+            }
+        }
+
+        async function selectTool(element, toolKey) {
+            document.querySelectorAll('.tool-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            element.classList.add('selected');
+
+            try {
+                const response = await fetch(`/tools/${toolKey}`);
+                const toolDetails = await response.json();
+                
+                selectedTool = toolDetails;
+                showToolHelp(toolDetails);
+                
+            } catch (error) {
+                console.error('获取工具详情失败:', error);
+            }
+        }
+
+        function showToolHelp(tool) {
+            const helpPanel = document.getElementById('helpPanel');
+            const helpTitle = document.getElementById('helpTitle');
+            const helpContent = document.getElementById('helpContent');
+            
+            helpTitle.textContent = `${tool.name} 使用指南`;
+            
+            let html = `
+                <div class="help-section">
+                    <div class="help-section-title">📝 工具简介</div>
+                    <div class="help-description">${tool.description || '暂无描述'}</div>
+                    
+                    <div class="help-section-title">💻 基本用法</div>
+                    <div class="help-usage">${tool.usage || tool.command}</div>
+                </div>
+            `;
+
+            if (tool.examples && tool.examples.length > 0) {
+                html += `
+                    <div class="help-section">
+                        <div class="help-section-title">📋 使用示例</div>
+                        ${tool.examples.map(ex => `
+                            <div class="example-item">
+                                <div class="example-cmd">${ex.cmd}</div>
+                                <div class="example-desc">${ex.desc}</div>
+                                <button class="example-use-btn" onclick="useExample('${ex.cmd.replace(/'/g, "\\'")}')">
+                                    ▶ 使用此命令
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            if (tool.tips && tool.tips.length > 0) {
+                html += `
+                    <div class="help-section">
+                        <div class="help-section-title">💡 使用技巧</div>
+                        ${tool.tips.map(tip => `
+                            <div class="tip-item">
+                                <span class="tip-icon">▸</span>
+                                <span>${tip}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            if (tool.common_options && Object.keys(tool.common_options).length > 0) {
+                html += `
+                    <div class="help-section">
+                        <div class="help-section-title">🔧 常用选项</div>
+                        ${Object.entries(tool.common_options).map(([flag, desc]) => `
+                            <div class="option-item">
+                                <span class="option-flag">${flag}</span>
+                                <span class="option-desc">${desc}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            html += `
+                <div class="help-section">
+                    <button class="execute-btn" onclick="useTool('${tool.command.replace(/'/g, "\\'")}')" style="width: 100%;">
+                        ▶ 执行 ${tool.name}
+                    </button>
+                </div>
+            `;
+
+            helpContent.innerHTML = html;
+            helpPanel.classList.add('active');
+        }
+
+        function useTool(command) {
+            document.getElementById('commandInput').value = command;
+            executeCommand();
+        }
+
+        function useExample(command) {
+            document.getElementById('commandInput').value = command;
+            executeCommand();
+        }
+
+        function closeHelp() {
+            document.getElementById('helpPanel').classList.remove('active');
+        }
+
+        function filterTools() {
+            const searchTerm = document.getElementById('toolSearch').value.toLowerCase();
+            
+            document.querySelectorAll('.tool-item').forEach(item => {
+                const toolData = JSON.parse(item.dataset.tool.replace(/&#39;/g, "'"));
+                const matches = toolData.name.toLowerCase().includes(searchTerm) ||
+                               toolData.description.toLowerCase().includes(searchTerm) ||
+                               toolData.key.toLowerCase().includes(searchTerm);
+                item.style.display = matches ? 'block' : 'none';
+            });
+
+            document.querySelectorAll('.tool-category').forEach(category => {
+                const hasVisibleTools = category.querySelectorAll('.tool-item[style="display: block"], .tool-item:not([style])').length > 0;
+                category.style.display = hasVisibleTools ? 'block' : 'none';
+            });
+        }
+
         async function loadHistory() {
             try {
                 const response = await fetch('/history');
@@ -575,14 +966,14 @@
             }
         }
 
-        // 更新历史面板
         function updateHistoryPanel() {
             const historyList = document.getElementById('historyList');
             
             if (commandHistory.length === 0) {
                 historyList.innerHTML = `
-                    <div style="padding: 20px; text-align: center; color: var(--text-secondary);">
-                        暂无历史记录
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <div class="empty-text">暂无历史记录</div>
                     </div>
                 `;
                 return;
@@ -590,37 +981,28 @@
 
             historyList.innerHTML = commandHistory.reverse().slice(0, 20).map(item => {
                 const time = new Date(item.timestamp).toLocaleString('zh-CN');
-                const statusClass = item.status === 'completed' ? '✓' : item.status === 'error' ? '✗' : '...';
+                const statusIcon = item.status === 'completed' ? '✅' : item.status === 'error' ? '❌' : '⏳';
                 return `
                     <div class="history-item" onclick="useHistoryCommand('${item.command.replace(/'/g, "\\'")}')">
-                        <div class="history-command">${statusClass} ${escapeHtml(item.command)}</div>
+                        <div class="history-command">${statusIcon} ${escapeHtml(item.command)}</div>
                         <div class="history-time">${time}</div>
                     </div>
                 `;
             }).join('');
         }
 
-        // 使用历史命令
         function useHistoryCommand(command) {
             document.getElementById('commandInput').value = command;
             document.getElementById('commandInput').focus();
             toggleHistory();
         }
 
-        // HTML转义
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
 
-        // 执行工具
-        function executeTool(name, command) {
-            document.getElementById('commandInput').value = command;
-            executeCommand();
-        }
-
-        // 执行命令
         async function executeCommand() {
             if (isExecuting) return;
 
@@ -635,10 +1017,8 @@
             const timestamp = new Date().toLocaleTimeString('zh-CN');
             const terminalOutput = document.getElementById('terminalOutput');
 
-            // 添加命令到输出
             addOutput(`<span class="timestamp">[${timestamp}]</span> <span class="command">$ ${escapeHtml(command)}</span>`, 'command');
 
-            // 添加到历史
             commandHistory.push({
                 command: command,
                 timestamp: new Date().toISOString(),
@@ -682,7 +1062,6 @@
                                     }
                                 }
                             } catch (e) {
-                                // 忽略解析错误
                             }
                         }
                     });
@@ -697,7 +1076,6 @@
             }
         }
 
-        // 添加输出
         function addOutput(text, className) {
             const terminalOutput = document.getElementById('terminalOutput');
             const line = document.createElement('div');
@@ -707,7 +1085,6 @@
             terminalOutput.scrollTop = terminalOutput.scrollHeight;
         }
 
-        // 更新UI状态
         function updateUI(running) {
             const executeBtn = document.getElementById('executeBtn');
             const runningIndicator = document.getElementById('runningIndicator');
@@ -718,7 +1095,6 @@
             runningIndicator.classList.toggle('active', running);
         }
 
-        // 处理键盘事件
         function handleKeyPress(event) {
             if (event.key === 'Enter') {
                 executeCommand();
@@ -726,13 +1102,14 @@
                 navigateHistory(-1);
             } else if (event.key === 'ArrowDown') {
                 navigateHistory(1);
-            } else if (event.ctrlKey && event.key === 'l') {
+            } else if (event.key === 'Tab') {
                 event.preventDefault();
-                clearTerminal();
+                if (selectedTool) {
+                    showToolHelp(selectedTool);
+                }
             }
         }
 
-        // 浏览历史命令
         function navigateHistory(direction) {
             if (commandHistory.length === 0) return;
 
@@ -749,13 +1126,11 @@
             commandInput.value = commandHistory[commandHistory.length - 1 - historyIndex].command;
         }
 
-        // 切换历史面板
         function toggleHistory() {
             const historyPanel = document.getElementById('historyPanel');
             historyPanel.classList.toggle('active');
         }
 
-        // 清空终端
         function clearTerminal() {
             const terminalOutput = document.getElementById('terminalOutput');
             terminalOutput.innerHTML = `
@@ -765,7 +1140,6 @@
             `;
         }
 
-        // 快捷键监听
         document.addEventListener('keydown', function(event) {
             if (event.ctrlKey && event.key === 'l') {
                 event.preventDefault();
